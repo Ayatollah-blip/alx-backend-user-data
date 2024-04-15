@@ -1,27 +1,33 @@
 #!/usr/bin/env python3
-"""doc doc doc """
-from typing import List, TypeVar
+""" manage the API authentication """
 from flask import request
+from typing import List, TypeVar
+import re
 
 
 class Auth:
-    """doc doc doc"""
+    """ authentication class """
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """doc doc doc"""
-        if path is None or excluded_paths is None or len(excluded_paths) == 0:
-            return True
-        if path[-1] != "/":
-            path += "/"
+        """ require auth """
+        if path and excluded_paths and len(excluded_paths):
+            for excluded_path in excluded_paths:
+                excluded_path.strip()
+                # print(path)
+                path = path + "/*"
+                # print(path, excluded_path)
 
-        return path not in excluded_paths
+                if re.match(excluded_path, path):
+                    return False
+
+        return True
 
     def authorization_header(self, request=None) -> str:
-        """doc doc doc"""
-        if request is None:
-            return None
-        return request.headers.get("Authorization", None)
+        """ authorization header """
+        if request:
+            return request.headers.get('Authorization')
+        return None
 
-    def current_user(self, request=None) -> TypeVar("User"):
-        """doc doc doc"""
+    def current_user(self, request=None) -> TypeVar('User'):
+        """ current user """
         return None
